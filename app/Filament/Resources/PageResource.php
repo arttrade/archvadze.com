@@ -5,102 +5,123 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\PageResource\Pages;
 use App\Models\Page;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Actions;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Schemas\Components\Section;
 
 class PageResource extends Resource
 {
     protected static ?string $model = Page::class;
-
-    protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-document';
+    protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationLabel = 'Pages';
 
     public static function form(Schema $schema): Schema
     {
-        return $schema
-            ->schema([
-                Forms\Components\TextInput::make('title')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\RichEditor::make('content')
-                    ->required(),
-                Forms\Components\TextInput::make('slug')
-                    ->required()
-                    ->unique(ignoreRecord: true)
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('meta_description')
-                    ->maxLength(65535),
-                Forms\Components\Toggle::make('is_published')
-                    ->default(false),
-                Forms\Components\TextInput::make('hero_title')
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('hero_subtitle')
-                    ->maxLength(65535),
-                Forms\Components\FileUpload::make('hero_image')
-                    ->image(),
-                Forms\Components\TextInput::make('hero_button_text')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('hero_button_url')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('portfolio_title')
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('portfolio_subtitle')
-                    ->maxLength(65535),
-                Forms\Components\TextInput::make('services_title')
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('services_subtitle')
-                    ->maxLength(65535),
-                Forms\Components\TextInput::make('features_title')
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('features_subtitle')
-                    ->maxLength(65535),
-                Forms\Components\TextInput::make('testimonials_title')
-                    ->maxLength(255),
-            ]);
+        $record = $schema->getRecord();
+        $slug = $record?->slug;
+
+        $isContact = $slug === 'contact';
+
+        $baseFields = [
+            Section::make('General')
+                ->schema([
+                    Forms\Components\TextInput::make('title')
+                        ->required()
+                        ->maxLength(255),
+                    Forms\Components\TextInput::make('slug')
+                        ->required()
+                        ->unique(ignoreRecord: true)
+                        ->maxLength(255)
+                        ->disabled(fn ($record) => in_array($record?->slug, ['about', 'contact'])),
+                    Forms\Components\Select::make('status')
+                        ->options(['draft' => 'Draft', 'published' => 'Published'])
+                        ->default('published')
+                        ->required(),
+                ])->columns(3),
+
+            Section::make('SEO')
+                ->schema([
+                    Forms\Components\TextInput::make('seo_title')->maxLength(255),
+                    Forms\Components\Textarea::make('seo_description')->maxLength(500)->rows(2),
+                ])->columns(2)->collapsed(),
+        ];
+
+        if ($isContact) {
+            return $schema->schema(array_merge($baseFields, [
+                Section::make('Contact Information')
+                    ->schema([
+                        Forms\Components\TextInput::make('contact_phone')
+                            ->label('Phone')->maxLength(255),
+                        Forms\Components\TextInput::make('contact_email')
+                            ->label('Email')->email()->maxLength(255),
+                        Forms\Components\TextInput::make('working_hours')
+                            ->label('Working Hours')->maxLength(255)
+                            ->placeholder('Mon-Fri: 9:00-18:00'),
+                        Forms\Components\Textarea::make('contact_address')
+                            ->label('Address')->rows(2)->maxLength(500),
+                    ])->columns(2),
+
+                Section::make('Google Maps')
+                    ->schema([
+                        Forms\Components\Textarea::make('google_maps_embed')
+                            ->label('Google Maps Embed Code')
+                            ->rows(4)
+                            ->placeholder('<iframe src="https://www.google.com/maps/embed?..." ...></iframe>')
+                            ->helperText('Google Maps → Share → Embed a map → კოდი აქ ჩასვი'),
+                    ]),
+
+                Section::make('Page Content')
+                    ->schema([
+                        Forms\Components\RichEditor::make('content')
+                            ->label('Additional Content (optional)'),
+                    ])->collapsed(),
+            ]));
+        }
+
+        return $schema->schema(array_merge($baseFields, [
+            Section::make('Content')
+                ->schema([
+                    Forms\Components\RichEditor::make('content')
+                        ->required(),
+                ]),
+
+            Section::make('Hero Section')
+                ->schema([
+                    Forms\Components\TextInput::make('hero_title')->maxLength(255),
+                    Forms\Components\Textarea::make('hero_subtitle')->rows(2)->maxLength(500),
+                    Forms\Components\FileUpload::make('hero_image')->image()->directory('pages'),
+                    Forms\Components\TextInput::make('hero_button_text')->maxLength(255),
+                    Forms\Components\TextInput::make('hero_button_url')->maxLength(255),
+                ])->columns(2)->collapsed(),
+        ]));
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('title')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('slug')
-                    ->searchable(),
-                Tables\Columns\IconColumn::make('is_published')
-                    ->boolean(),
-                Tables\Columns\TextColumn::make('hero_title'),
-                Tables\Columns\TextColumn::make('portfolio_title'),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-            ])
-            ->filters([
-                //
+                Tables\Columns\TextColumn::make('title')->searchable(),
+                Tables\Columns\TextColumn::make('slug')->badge()->color('gray'),
+                Tables\Columns\TextColumn::make('status')->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'published' => 'success',
+                        'draft' => 'warning',
+                        default => 'gray',
+                    }),
+                Tables\Columns\TextColumn::make('updated_at')->dateTime()->sortable(),
             ])
             ->actions([
                 Actions\EditAction::make(),
+                Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Actions\BulkActionGroup::make([
                     Actions\DeleteBulkAction::make(),
                 ]),
             ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
     }
 
     public static function getPages(): array

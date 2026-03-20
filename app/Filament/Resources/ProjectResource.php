@@ -5,78 +5,79 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ProjectResource\Pages;
 use App\Models\Project;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Actions;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
 use Filament\Tables;
 use Filament\Tables\Table;
 
 class ProjectResource extends Resource
 {
     protected static ?string $model = Project::class;
-
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-folder';
+    protected static ?string $navigationLabel = 'Client Projects';
 
     public static function form(Schema $schema): Schema
     {
-        return $schema
-            ->schema([
-                Forms\Components\TextInput::make('title')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('description')
-                    ->maxLength(65535),
-                Forms\Components\Select::make('client_id')
-                    ->relationship('client', 'name')
-                    ->required(),
-                Forms\Components\Select::make('status')
-                    ->options([
-                        'planning' => 'Planning',
-                        'in_progress' => 'In Progress',
-                        'review' => 'Review',
-                        'completed' => 'Completed',
-                        'on_hold' => 'On Hold',
-                    ])
-                    ->required(),
-                Forms\Components\TextInput::make('budget')
-                    ->numeric()
-                    ->prefix('$'),
-                Forms\Components\DatePicker::make('deadline'),
-                Forms\Components\DatePicker::make('start_date'),
-            ]);
+        return $schema->schema([
+            Section::make('Project Info')
+                ->schema([
+                    Forms\Components\TextInput::make('title')
+                        ->required()
+                        ->maxLength(255),
+                    Forms\Components\Select::make('client_id')
+                        ->relationship('client', 'name')
+                        ->searchable()
+                        ->preload()
+                        ->required(),
+                    Forms\Components\Select::make('status')
+                        ->options([
+                            'pending'     => 'Pending',
+                            'in_progress' => 'In Progress',
+                            'review'      => 'Review',
+                            'completed'   => 'Completed',
+                        ])
+                        ->default('pending')
+                        ->required(),
+                    Forms\Components\TextInput::make('price')
+                        ->numeric()
+                        ->prefix('$'),
+                    Forms\Components\DatePicker::make('deadline'),
+                ])->columns(2),
+
+            Section::make('Description')
+                ->schema([
+                    Forms\Components\Textarea::make('description')
+                        ->rows(4)
+                        ->columnSpanFull(),
+                ]),
+        ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('title')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('client.name')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('status')
-                    ->badge(),
-                Tables\Columns\TextColumn::make('budget')
-                    ->money('USD'),
-                Tables\Columns\TextColumn::make('deadline')
-                    ->date(),
-                Tables\Columns\TextColumn::make('start_date')
-                    ->date(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
+                Tables\Columns\TextColumn::make('title')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('client.name')->sortable(),
+                Tables\Columns\TextColumn::make('status')->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'pending'     => 'gray',
+                        'in_progress' => 'warning',
+                        'review'      => 'info',
+                        'completed'   => 'success',
+                        default       => 'gray',
+                    }),
+                Tables\Columns\TextColumn::make('price')->money('USD'),
+                Tables\Columns\TextColumn::make('deadline')->date()->sortable(),
+                Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->filters([
-                //
-            ])
+            ->defaultSort('created_at', 'desc')
             ->actions([
                 Actions\EditAction::make(),
+                Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Actions\BulkActionGroup::make([
@@ -87,17 +88,15 @@ class ProjectResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListProjects::route('/'),
+            'index'  => Pages\ListProjects::route('/'),
             'create' => Pages\CreateProject::route('/create'),
-            'edit' => Pages\EditProject::route('/{record}/edit'),
+            'edit'   => Pages\EditProject::route('/{record}/edit'),
         ];
     }
 }

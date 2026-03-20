@@ -22,6 +22,7 @@ class PortfolioProject extends Model
         'completed_at',
         'is_featured',
         'is_published',
+        'cover_image',
     ];
 
     protected $casts = [

@@ -144,6 +144,8 @@
                         <a href="{{ route('portfolio') }}" class="block text-sm hover:text-white transition-colors">Portfolio</a>
                         <a href="{{ route('blog') }}" class="block text-sm hover:text-white transition-colors">Blog</a>
                         <a href="{{ route('order.create') }}" class="block text-sm hover:text-white transition-colors">Order Now</a>
+                        <a href="{{ route('about') }}" class="block text-sm hover:text-white transition-colors">About</a>
+                        <a href="{{ route('contact') }}" class="block text-sm hover:text-white transition-colors">Contact</a>
                     </nav>
                 </div>
 

@@ -6,6 +6,7 @@ use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\PublicationController;
 use App\Http\Controllers\GuideController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\DomainSearchController;
 use App\Http\Controllers\ClientDashboardController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
@@ -20,6 +21,8 @@ Route::get('/guides', [GuideController::class, 'index'])->name('guides');
 Route::get('/guides/{slug}', [GuideController::class, 'show'])->name('guides.show');
 Route::get('/about', [PageController::class, 'about'])->name('about');
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');
+Route::post('/contact', [PageController::class, 'sendContact'])->name('contact.send');
+Route::post('/domain-search', [DomainSearchController::class, 'search'])->name('domain.search');
 
 Route::get('/order', [OrderController::class, 'create'])->name('order.create');
 Route::post('/order', [OrderController::class, 'store'])->name('order.store');

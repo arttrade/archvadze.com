@@ -19,9 +19,9 @@
                 @foreach($projects as $index => $project)
                     <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 group">
                         <div class="aspect-video bg-gradient-to-br from-primary/20 to-primary/5 overflow-hidden">
-                            @if($project->portfolio_image)
+                            @if($project->cover_image)
                                 <img
-                                    src="{{ asset('storage/' . $project->portfolio_image) }}"
+                                    src="{{ asset('storage/' . $project->cover_image) }}"
                                     alt="{{ $project->title }}"
                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                 />

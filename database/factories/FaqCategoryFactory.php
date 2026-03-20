@@ -5,36 +5,16 @@ namespace Database\Factories;
 use App\Models\FaqCategory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\FaqCategory>
- */
 class FaqCategoryFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
     protected $model = FaqCategory::class;
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
-        $categories = [
-            'General',
-            'Services',
-            'Pricing',
-            'Technical',
-            'Support',
-        ];
+        $categories = ['General', 'Services', 'Pricing', 'Technical', 'Support'];
 
         return [
             'name' => $this->faker->unique()->randomElement($categories),
-            'slug' => $this->faker->unique()->slug(),
         ];
     }
 }

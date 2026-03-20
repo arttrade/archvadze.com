@@ -5,75 +5,115 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\PortfolioProjectResource\Pages;
 use App\Models\PortfolioProject;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Actions;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
 use Filament\Tables;
 use Filament\Tables\Table;
 
 class PortfolioProjectResource extends Resource
 {
     protected static ?string $model = PortfolioProject::class;
-
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-photo';
+    protected static ?string $navigationLabel = 'Portfolio';
 
     public static function form(Schema $schema): Schema
     {
-        return $schema
-            ->schema([
-                Forms\Components\TextInput::make('title')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('description')
-                    ->maxLength(65535),
-                Forms\Components\TagsInput::make('technologies')
-                    ->placeholder('Add technologies...'),
-                Forms\Components\TextInput::make('project_url')
-                    ->label('Project URL')
-                    ->url()
-                    ->maxLength(255),
-                Forms\Components\Select::make('client_id')
-                    ->relationship('client', 'name'),
-                Forms\Components\DatePicker::make('completed_at'),
-                Forms\Components\Toggle::make('is_featured')
-                    ->default(false),
-            ]);
+        return $schema->schema([
+            Section::make('Project Details')
+                ->schema([
+                    Forms\Components\TextInput::make('title')
+                        ->required()
+                        ->maxLength(255)
+                        ->live(onBlur: true)
+                        ->afterStateUpdated(fn ($state, callable $set) =>
+                            $set('slug', \Illuminate\Support\Str::slug($state))
+                        ),
+                    Forms\Components\TextInput::make('slug')
+                        ->maxLength(255)
+                        ->unique(ignoreRecord: true),
+                    Forms\Components\Select::make('client_id')
+                        ->relationship('client', 'name')
+                        ->searchable()
+                        ->preload(),
+                    Forms\Components\Select::make('project_type')
+                        ->options([
+                            'website'    => 'Website',
+                            'e-commerce' => 'E-commerce',
+                            'web-app'    => 'Web Application',
+                            'mobile-app' => 'Mobile App',
+                            'branding'   => 'Branding',
+                        ]),
+                    Forms\Components\DatePicker::make('completed_at')
+                        ->label('Completed At'),
+                    Forms\Components\TextInput::make('project_url')
+                        ->label('Project URL')
+                        ->url()
+                        ->maxLength(255),
+                ])->columns(2),
+
+            Section::make('Cover Image')
+                ->schema([
+                    Forms\Components\FileUpload::make('cover_image')
+                        ->label('Cover Image')
+                        ->image()
+                        ->disk('public')->directory('portfolio')
+                        ->imageResizeMode('cover')
+                        ->imageCropAspectRatio('16:9')
+                        ->imageResizeTargetWidth('1200')
+                        ->imageResizeTargetHeight('675')
+                        ->columnSpanFull(),
+                ]),
+
+            Section::make('Description & Technologies')
+                ->schema([
+                    Forms\Components\Textarea::make('description')
+                        ->rows(4)
+                        ->columnSpanFull(),
+                    Forms\Components\TagsInput::make('technologies')
+                        ->placeholder('Laravel, Vue.js, MySQL...')
+                        ->columnSpanFull(),
+                ]),
+
+            Section::make('Visibility')
+                ->schema([
+                    Forms\Components\Toggle::make('is_featured')
+                        ->label('Featured on Homepage')
+                        ->default(false),
+                    Forms\Components\Toggle::make('is_published')
+                        ->label('Published')
+                        ->default(true),
+                ])->columns(2),
+        ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
+                Tables\Columns\ImageColumn::make('cover_image')
+                    ->label('Cover')
+                    ->height(50)
+                    ->width(80),
                 Tables\Columns\TextColumn::make('title')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('client.name')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('project_url')
-                    ->label('Project URL')
-                    ->limit(30),
-                Tables\Columns\TextColumn::make('technologies')
+                Tables\Columns\TextColumn::make('project_type')
                     ->badge()
                     ->color('gray'),
                 Tables\Columns\TextColumn::make('completed_at')
-                    ->date(),
-                Tables\Columns\IconColumn::make('is_featured')
-                    ->boolean(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->date()
+                    ->sortable(),
+                Tables\Columns\IconColumn::make('is_featured')->boolean(),
+                Tables\Columns\IconColumn::make('is_published')->boolean(),
             ])
-            ->filters([
-                //
-            ])
+            ->defaultSort('created_at', 'desc')
             ->actions([
                 Actions\EditAction::make(),
-                Actions\ViewAction::make(),
+                Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Actions\BulkActionGroup::make([
@@ -84,17 +124,15 @@ class PortfolioProjectResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPortfolioProjects::route('/'),
+            'index'  => Pages\ListPortfolioProjects::route('/'),
             'create' => Pages\CreatePortfolioProject::route('/create'),
-            'edit' => Pages\EditPortfolioProject::route('/{record}/edit'),
+            'edit'   => Pages\EditPortfolioProject::route('/{record}/edit'),
         ];
     }
 }

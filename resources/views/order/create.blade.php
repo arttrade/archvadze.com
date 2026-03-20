@@ -98,7 +98,7 @@
             <label for="service-{{ $service->id }}" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer">
               {{ $service->name }}
               @if($service->base_price > 0)
-                <span class="text-gray-500">(${number_format($service->base_price, 0)})</span>
+                <span class="text-gray-500">(${{ number_format($service->base_price, 0) }})</span>
               @endif
             </label>
           </div>
@@ -117,7 +117,7 @@
             <label for="feature-{{ $feature->id }}" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer">
               {{ $feature->name }}
               @if($feature->price > 0)
-                <span class="text-gray-500">(${number_format($feature->price, 0)})</span>
+                <span class="text-gray-500">(${{ number_format($feature->price, 0) }})</span>
               @endif
             </label>
           </div>

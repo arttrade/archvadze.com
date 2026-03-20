@@ -57,9 +57,9 @@
 
             <div class="bg-white rounded-lg shadow-sm overflow-hidden">
 
-                @if($project->images->first()?->image_path)
+                @if($project->cover_image)
                 <img
-                    src="{{ asset('storage/'.$project->images->first()->image_path) }}"
+                    src="{{ asset('storage/'.$project->cover_image) }}"
                     class="w-full h-48 object-cover"
                 >
                 @else

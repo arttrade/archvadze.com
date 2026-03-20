@@ -147,7 +147,7 @@ class DatabaseSeeder extends Seeder
         // Create project messages (100 messages)
         ProjectMessage::factory()->count(100)->create([
             'project_id' => $projects->random()->id,
-            'user_id' => collect([$admin->id])->merge($clientUsers->pluck('id'))->random(),
+            'sender_id' => collect([$admin->id])->merge($clientUsers->pluck('id'))->random(),
         ]);
 
         // Create orders (20 orders)
