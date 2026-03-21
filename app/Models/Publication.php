@@ -20,6 +20,7 @@ class Publication extends Model
         'status',
         'published_at',
         'is_published',
+        'cover_image',
     ];
 
     protected $casts = [

@@ -30,6 +30,12 @@ class ServiceResource extends Resource
                 Forms\Components\TextInput::make('icon')
                     ->maxLength(255)
                     ->placeholder('e.g., code, palette, rocket'),
+                Forms\Components\FileUpload::make('image')
+                    ->label('Service Image')
+                    ->image()
+                    ->disk('public')
+                    ->directory('services')
+                    ->columnSpanFull(),
                 Forms\Components\TextInput::make('button_text')
                     ->maxLength(255)
                     ->default('Get Started'),

@@ -190,47 +190,48 @@
 
 <!-- Testimonials -->
 <section class="py-24 bg-white">
-
     <div class="max-w-7xl mx-auto px-4">
-
         <div class="text-center mb-16">
-
-            <h2 class="text-4xl font-bold text-gray-900 mb-4">
-                {{ $homePage->testimonials_title ?? 'What Our Clients Say' }}
+            <h2 class="text-4xl font-bold text-gray-900 mb-3" style="letter-spacing:-0.02em">
+                {{ $homePage->testimonials_title ?? 'What our clients say' }}
             </h2>
-
+            <p class="text-gray-500">Real feedback from businesses we've helped grow</p>
         </div>
 
-        <div class="grid md:grid-cols-2 gap-8">
-
+        <div class="grid md:grid-cols-2 gap-6">
             @foreach($testimonials ?? [] as $testimonial)
+            <div class="border border-gray-200 rounded-2xl p-8">
+                {{-- Quote icon SVG --}}
+                <svg class="w-8 h-8 text-primary/30 mb-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.598-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.598-3.996 5.849h3.983v10h-9.983z"/>
+                </svg>
 
-            <div class="bg-gray-50 p-6 rounded-lg">
-
-                <p class="text-gray-700 mb-4">
+                <p class="text-gray-700 leading-relaxed mb-6">
                     {{ $testimonial->testimonial_text }}
                 </p>
 
-                <div>
-
-                    <p class="font-semibold">
-                        {{ $testimonial->client_name }}
-                    </p>
-
-                    <p class="text-sm text-gray-500">
-                        {{ $testimonial->client_position }} {{ $testimonial->company }}
-                    </p>
-
+                {{-- Author --}}
+                <div class="flex items-center gap-3">
+                    @if($testimonial->photo)
+                        <img src="{{ asset('storage/'.$testimonial->photo) }}"
+                             alt="{{ $testimonial->client_name }}"
+                             class="w-10 h-10 rounded-full object-cover">
+                    @else
+                        <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold text-sm">
+                            {{ substr($testimonial->client_name, 0, 1) }}
+                        </div>
+                    @endif
+                    <div>
+                        <p class="font-semibold text-gray-900 text-sm">{{ $testimonial->client_name }}</p>
+                        <p class="text-xs text-gray-500">
+                            {{ $testimonial->client_position }}{{ $testimonial->company ? ', '.$testimonial->company : '' }}
+                        </p>
+                    </div>
                 </div>
-
             </div>
-
             @endforeach
-
         </div>
-
     </div>
-
 </section>
 
 @endsection

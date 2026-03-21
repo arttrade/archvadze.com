@@ -28,7 +28,9 @@ class TestimonialResource extends Resource
                 Forms\Components\TextInput::make('company')
                     ->maxLength(255),
                 Forms\Components\FileUpload::make('photo')
-                    ->image(),
+                    ->image()
+                    ->disk('public')
+                    ->directory('testimonials'),
                 Forms\Components\Textarea::make('testimonial_text')
                     ->required()
                     ->maxLength(65535),

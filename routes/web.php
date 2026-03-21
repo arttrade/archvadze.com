@@ -6,6 +6,7 @@ use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\PublicationController;
 use App\Http\Controllers\GuideController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\Auth\SocialAuthController;
 use App\Http\Controllers\DomainSearchController;
 use App\Http\Controllers\ClientDashboardController;
 use App\Http\Controllers\OrderController;
@@ -20,6 +21,10 @@ Route::get('/blog/{slug}', [PublicationController::class, 'show'])->name('blog.s
 Route::get('/guides', [GuideController::class, 'index'])->name('guides');
 Route::get('/guides/{slug}', [GuideController::class, 'show'])->name('guides.show');
 Route::get('/about', [PageController::class, 'about'])->name('about');
+Route::get('/faq', [PageController::class, 'faq'])->name('faq');
+Route::get('/privacy-policy', [PageController::class, 'privacyPolicy'])->name('privacy-policy');
+Route::get('/terms', [PageController::class, 'terms'])->name('terms');
+Route::post('/newsletter/subscribe', [App\Http\Controllers\NewsletterController::class, 'subscribe'])->name('newsletter.subscribe');
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 Route::post('/contact', [PageController::class, 'sendContact'])->name('contact.send');
 Route::post('/domain-search', [DomainSearchController::class, 'search'])->name('domain.search');
@@ -34,6 +39,7 @@ Route::middleware(['auth', 'client'])->prefix('client-dashboard')->name('client-
     Route::post('/project/{projectId}/message', [ClientDashboardController::class, 'sendMessage'])->name('send-message');
     Route::post('/project/{projectId}/upload', [ClientDashboardController::class, 'uploadFile'])->name('upload-file');
     Route::get('/file/{fileId}/download', [ClientDashboardController::class, 'downloadFile'])->name('download-file');
+    Route::get('/profile', [ClientDashboardController::class, 'editProfile'])->name('profile');
 });
 
 Route::get('/dashboard', function () {
@@ -58,4 +64,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// Social Auth
+Route::get('/auth/{provider}/redirect', [SocialAuthController::class, 'redirect'])->name('social.redirect');
+Route::get('/auth/{provider}/callback', [SocialAuthController::class, 'callback'])->name('social.callback');
+
 require __DIR__.'/auth.php';
+Route::get('/testimonials', [App\Http\Controllers\TestimonialController::class, 'index'])->name('testimonials');

@@ -20,6 +20,10 @@ class Order extends Model
         'website_type',
         'price_estimate',
         'status',
+        'timeline',
+        'budget_range',
+        'project_description',
+        'additional_requirements',
     ];
 
     public function client(): BelongsTo

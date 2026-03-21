@@ -18,6 +18,7 @@ class Service extends Model
         'status',
         'is_active',
         'button_text',
+        'image',
     ];
 
     protected $casts = [

@@ -17,30 +17,49 @@
 
     <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
       @foreach($publications as $publication)
-      <article class="group bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-all duration-300">
+      <article class="group bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300">
+
+        {{-- Cover Image --}}
+        <a href="{{ route('blog.show', $publication->slug) }}" class="block relative h-48 overflow-hidden bg-gray-100">
+          @if($publication->cover_image)
+            <img src="{{ asset('storage/'.$publication->cover_image) }}" alt="{{ $publication->title }}"
+                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+          @else
+            <div class="w-full h-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+              <svg class="w-12 h-12 text-primary/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
+              </svg>
+            </div>
+          @endif
+        </a>
+
         <div class="p-6">
-          <h2 class="text-xl font-semibold text-gray-900 mb-3 group-hover:text-primary transition-colors">
-            <a href="{{ route('blog.show', $publication->slug) }}" class="block">
-              {{ $publication->title }}
-            </a>
+          @if($publication->categories->first())
+            <span class="text-xs font-medium text-primary uppercase tracking-wide">
+              {{ $publication->categories->first()->name }}
+            </span>
+          @endif
+          <h2 class="text-lg font-semibold text-gray-900 mt-1 mb-2 group-hover:text-primary transition-colors">
+            <a href="{{ route('blog.show', $publication->slug) }}">{{ $publication->title }}</a>
           </h2>
-          <p class="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-3">
-            {{ Str::limit(strip_tags($publication->content), 150) }}
+          <p class="text-gray-500 text-sm leading-relaxed mb-4 line-clamp-2">
+            {{ $publication->excerpt ?? Str::limit(strip_tags($publication->content), 120) }}
           </p>
           <div class="flex items-center justify-between">
-            <div class="flex items-center text-sm text-gray-500">
+            <div class="text-xs text-gray-400">
               @if($publication->author)
-              <span>By {{ $publication->author->name }}</span>
+                <span>{{ $publication->author->name }}</span>
               @endif
               @if($publication->published_at)
-              <span class="ml-4">{{ $publication->published_at->format('M j, Y') }}</span>
+                <span class="ml-2">{{ $publication->published_at->format('M j, Y') }}</span>
               @endif
             </div>
             <a href="{{ route('blog.show', $publication->slug) }}"
                class="inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 transition-colors">
               Read more
               <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
               </svg>
             </a>
           </div>
@@ -49,45 +68,9 @@
       @endforeach
     </div>
 
-    <!-- Pagination -->
     @if($publications->hasPages())
     <div class="mt-12 flex justify-center">
-      <div class="flex space-x-1">
-        {{-- Previous Page Link --}}
-        @if ($publications->onFirstPage())
-          <span class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-md cursor-not-allowed">
-            Previous
-          </span>
-        @else
-          <a href="{{ $publications->previousPageUrl() }}" class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50 transition-colors">
-            Previous
-          </a>
-        @endif
-
-        {{-- Pagination Elements --}}
-        @foreach ($publications->getUrlRange(1, $publications->lastPage()) as $page => $url)
-          @if ($page == $publications->currentPage())
-            <span class="px-3 py-2 text-sm font-medium text-white bg-primary border border-primary">
-              {{ $page }}
-            </span>
-          @else
-            <a href="{{ $url }}" class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 transition-colors">
-              {{ $page }}
-            </a>
-          @endif
-        @endforeach
-
-        {{-- Next Page Link --}}
-        @if ($publications->hasMorePages())
-          <a href="{{ $publications->nextPageUrl() }}" class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50 transition-colors">
-            Next
-          </a>
-        @else
-          <span class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md cursor-not-allowed">
-            Next
-          </span>
-        @endif
-      </div>
+      {{ $publications->links() }}
     </div>
     @endif
   </div>

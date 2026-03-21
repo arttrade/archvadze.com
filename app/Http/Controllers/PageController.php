@@ -20,6 +20,24 @@ class PageController extends Controller
         return view('frontend.contact', compact('page'));
     }
 
+    public function faq()
+    {
+        $categories = \App\Models\FaqCategory::with('faqs')->get();
+        return view('frontend.faq', compact('categories'));
+    }
+
+    public function privacyPolicy()
+    {
+        $page = \App\Models\Page::where('slug', 'privacy-policy')->where('status', 'published')->first();
+        return view('frontend.privacy_policy', compact('page'));
+    }
+
+    public function terms()
+    {
+        $page = \App\Models\Page::where('slug', 'terms')->where('status', 'published')->first();
+        return view('frontend.terms', compact('page'));
+    }
+
     public function sendContact(Request $request)
     {
         $validated = $request->validate([
