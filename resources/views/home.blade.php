@@ -117,35 +117,65 @@
 <!-- Services Section -->
 <section class="py-24 bg-white">
     <div class="max-w-7xl mx-auto px-4">
-
         <div class="text-center mb-16">
-            <h2 class="text-4xl font-bold text-gray-900 mb-4">
+            <h2 class="text-4xl font-bold text-gray-900 mb-4" style="letter-spacing:-0.02em">
                 {{ $homePage->services_title ?? 'Our Services' }}
             </h2>
             <p class="text-xl text-gray-600">
-                {{ $homePage->services_subtitle ?? 'Comprehensive web solutions tailored to your business needs' }}
+                {{ $homePage->services_subtitle ?? 'Comprehensive solutions to bring your digital vision to life' }}
             </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-
-            @foreach($featuredServices as $service)
-            <div class="bg-gray-50 p-8 rounded-lg text-center hover:shadow-lg transition-shadow">
-                <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-6">
-                    <i class="fas fa-{{ $service->icon ?? 'code' }} text-white text-2xl"></i>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            @foreach($featuredServices->take(4) as $service)
+            @if($loop->index % 2 === 0)
+            <div class="grid grid-cols-2 rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                <div class="p-8 flex flex-col justify-center">
+                    <div class="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-primary/10 text-primary mb-4">
+                        <i class="fas fa-{{ $service->icon ?? 'code' }} text-lg"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">{{ $service->name }}</h3>
+                    <p class="text-sm text-gray-600 leading-relaxed mb-4">{{ Str::limit($service->description, 100) }}</p>
+                    <a href="{{ route('services') }}" class="text-sm font-medium text-primary hover:text-primary/80 inline-flex items-center gap-1">
+                        Learn more <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </a>
                 </div>
-
-                <h3 class="text-xl font-semibold text-gray-900 mb-4">
-                    {{ $service->name }}
-                </h3>
-
-                <p class="text-gray-600">
-                    {{ $service->description }}
-                </p>
+                <div class="bg-gray-100 flex items-center justify-center min-h-48">
+                    @if($service->image)
+                        <img src="{{ asset('storage/'.$service->image) }}" alt="{{ $service->name }}" class="w-full h-full object-cover">
+                    @else
+                        <div class="flex flex-col items-center justify-center text-gray-300 p-6">
+                            <i class="fas fa-{{ $service->icon ?? 'code' }} text-5xl"></i>
+                        </div>
+                    @endif
+                </div>
             </div>
+            @else
+            <div class="grid grid-cols-2 rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                <div class="bg-gray-100 flex items-center justify-center min-h-48">
+                    @if($service->image)
+                        <img src="{{ asset('storage/'.$service->image) }}" alt="{{ $service->name }}" class="w-full h-full object-cover">
+                    @else
+                        <div class="flex flex-col items-center justify-center text-gray-300 p-6">
+                            <i class="fas fa-{{ $service->icon ?? 'code' }} text-5xl"></i>
+                        </div>
+                    @endif
+                </div>
+                <div class="p-8 flex flex-col justify-center">
+                    <div class="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-primary/10 text-primary mb-4">
+                        <i class="fas fa-{{ $service->icon ?? 'code' }} text-lg"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">{{ $service->name }}</h3>
+                    <p class="text-sm text-gray-600 leading-relaxed mb-4">{{ Str::limit($service->description, 100) }}</p>
+                    <a href="{{ route('services') }}" class="text-sm font-medium text-primary hover:text-primary/80 inline-flex items-center gap-1">
+                        Learn more <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </a>
+                </div>
+            </div>
+            @endif
             @endforeach
-
         </div>
+
 
     </div>
 </section>

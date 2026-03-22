@@ -24,7 +24,7 @@
       {{-- ლუწი: ტექსტი მარცხნივ, სურათი მარჯვნივ --}}
       <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
         <div class="flex flex-col justify-center">
-          <div class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10 text-primary mb-6">
+          <div class="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-primary/10 text-primary mb-6">
             <i class="fas fa-{{ $service->icon ?? 'code' }} text-xl"></i>
           </div>
           <h2 class="text-3xl font-bold text-gray-900 mb-4" style="letter-spacing:-0.02em;">{{ $service->name }}</h2>
@@ -65,7 +65,7 @@
           @endif
         </div>
         <div class="flex flex-col justify-center">
-          <div class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10 text-primary mb-6">
+          <div class="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-primary/10 text-primary mb-6">
             <i class="fas fa-{{ $service->icon ?? 'code' }} text-xl"></i>
           </div>
           <h2 class="text-3xl font-bold text-gray-900 mb-4" style="letter-spacing:-0.02em;">{{ $service->name }}</h2>
