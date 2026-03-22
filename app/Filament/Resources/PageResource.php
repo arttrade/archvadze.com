@@ -28,6 +28,7 @@ class PageResource extends Resource
 
         $baseFields = [
             Section::make('General')
+                ->columnSpanFull()
                 ->schema([
                     Forms\Components\TextInput::make('title')
                         ->required()
@@ -44,6 +45,7 @@ class PageResource extends Resource
                 ])->columns(3),
 
             Section::make('SEO')
+                ->columnSpanFull()
                 ->schema([
                     Forms\Components\TextInput::make('seo_title')->maxLength(255),
                     Forms\Components\Textarea::make('seo_description')->maxLength(500)->rows(2),
@@ -53,6 +55,7 @@ class PageResource extends Resource
         if ($isContact) {
             return $schema->schema(array_merge($baseFields, [
                 Section::make('Contact Information')
+                    ->columnSpanFull()
                     ->schema([
                         Forms\Components\TextInput::make('contact_phone')
                             ->label('Phone')->maxLength(255),
@@ -66,6 +69,7 @@ class PageResource extends Resource
                     ])->columns(2),
 
                 Section::make('Google Maps')
+                    ->columnSpanFull()
                     ->schema([
                         Forms\Components\Textarea::make('google_maps_embed')
                             ->label('Google Maps Embed Code')
@@ -75,6 +79,7 @@ class PageResource extends Resource
                     ]),
 
                 Section::make('Page Content')
+                    ->columnSpanFull()
                     ->schema([
                         Forms\Components\RichEditor::make('content')
                             ->label('Additional Content (optional)'),
@@ -84,12 +89,14 @@ class PageResource extends Resource
 
         return $schema->schema(array_merge($baseFields, [
             Section::make('Content')
+                ->columnSpanFull()
                 ->schema([
                     Forms\Components\RichEditor::make('content')
                         ->required(),
                 ]),
 
             Section::make('Hero Section')
+                ->columnSpanFull()
                 ->schema([
                     Forms\Components\TextInput::make('hero_title')->maxLength(255),
                     Forms\Components\Textarea::make('hero_subtitle')->rows(2)->maxLength(500),

@@ -21,13 +21,14 @@ class SiteSettingResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->schema([
-            Forms\Components\TextInput::make('key')
-                ->required()
-                ->unique(ignoreRecord: true)
-                ->maxLength(255),
-            Forms\Components\Textarea::make('value')
-                ->rows(3)
-                ->maxLength(65535),
+            Section::make('Setting')
+                ->columnSpanFull()
+                ->schema([
+                    Forms\Components\TextInput::make('key')
+                        ->required()->unique(ignoreRecord: true)->maxLength(255),
+                    Forms\Components\Textarea::make('value')
+                        ->rows(3)->columnSpanFull(),
+                ])->columns(2),
         ]);
     }
 
@@ -35,15 +36,9 @@ class SiteSettingResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('key')
-                    ->searchable()
-                    ->badge()
-                    ->color('gray'),
-                Tables\Columns\TextColumn::make('value')
-                    ->limit(60),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
+                Tables\Columns\TextColumn::make('key')->searchable()->badge()->color('gray'),
+                Tables\Columns\TextColumn::make('value')->limit(60),
+                Tables\Columns\TextColumn::make('updated_at')->dateTime()->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->actions([
@@ -51,9 +46,7 @@ class SiteSettingResource extends Resource
                 Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Actions\BulkActionGroup::make([
-                    Actions\DeleteBulkAction::make(),
-                ]),
+                Actions\BulkActionGroup::make([Actions\DeleteBulkAction::make()]),
             ]);
     }
 

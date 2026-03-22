@@ -23,6 +23,7 @@ class ProjectResource extends Resource
     {
         return $schema->schema([
             Section::make('Project Info')
+                ->columnSpanFull()
                 ->schema([
                     Forms\Components\TextInput::make('title')
                         ->required()
@@ -48,6 +49,7 @@ class ProjectResource extends Resource
                 ])->columns(2),
 
             Section::make('Description')
+                ->columnSpanFull()
                 ->schema([
                     Forms\Components\Textarea::make('description')
                         ->rows(4)

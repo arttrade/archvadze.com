@@ -15,27 +15,22 @@ class FaqResource extends Resource
 {
     protected static ?string $model = Faq::class;
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-question-mark-circle';
-    protected static ?int $navigationSort = 11;
     protected static ?string $navigationLabel = 'FAQ';
+    protected static ?int $navigationSort = 11;
 
     public static function form(Schema $schema): Schema
     {
         return $schema->schema([
             Section::make()
+                ->columnSpanFull()
                 ->schema([
                     Forms\Components\Select::make('category_id')
                         ->relationship('category', 'name')
-                        ->searchable()
-                        ->preload()
-                        ->required(),
+                        ->searchable()->preload()->required(),
                     Forms\Components\TextInput::make('question')
-                        ->required()
-                        ->maxLength(255)
-                        ->columnSpanFull(),
+                        ->required()->maxLength(255)->columnSpanFull(),
                     Forms\Components\Textarea::make('answer')
-                        ->required()
-                        ->rows(4)
-                        ->columnSpanFull(),
+                        ->required()->rows(4)->columnSpanFull(),
                 ])->columns(2),
         ]);
     }
@@ -54,9 +49,7 @@ class FaqResource extends Resource
                 Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Actions\BulkActionGroup::make([
-                    Actions\DeleteBulkAction::make(),
-                ]),
+                Actions\BulkActionGroup::make([Actions\DeleteBulkAction::make()]),
             ]);
     }
 

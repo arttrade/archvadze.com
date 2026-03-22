@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\FeatureResource\Pages;
@@ -16,25 +15,25 @@ class FeatureResource extends Resource
 {
     protected static ?string $model = Feature::class;
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-star';
+    protected static ?string $navigationLabel = 'Features';
+    protected static ?int $navigationSort = 7;
 
     public static function form(Schema $schema): Schema
     {
         return $schema->schema([
             Section::make('Feature Details')
+                ->columnSpanFull()
                 ->schema([
                     Forms\Components\TextInput::make('name')
-                        ->required()
-                        ->maxLength(255),
+                        ->required()->maxLength(255),
                     Forms\Components\TextInput::make('icon')
                         ->maxLength(255)
-                        ->placeholder('e.g., star, rocket, code')
-                        ->helperText('Font Awesome icon name (without "fa-" prefix). Examples: star, rocket, code, shield, globe'),
+                        ->placeholder('star, rocket, code...')
+                        ->helperText('Font Awesome icon name without "fa-" prefix'),
                     Forms\Components\TextInput::make('price')
-                        ->numeric()
-                        ->prefix('$'),
+                        ->numeric()->prefix('$'),
                     Forms\Components\Textarea::make('description')
-                        ->rows(3)
-                        ->columnSpanFull(),
+                        ->rows(3)->columnSpanFull(),
                 ])->columns(2),
         ]);
     }
@@ -43,10 +42,8 @@ class FeatureResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')->searchable(),
-                Tables\Columns\TextColumn::make('icon')
-                    ->formatStateUsing(fn ($state) => $state ? "fa-{$state}" : '-')
-                    ->badge()->color('gray'),
+                Tables\Columns\TextColumn::make('name')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('icon')->badge()->color('gray'),
                 Tables\Columns\TextColumn::make('price')->money('USD'),
                 Tables\Columns\TextColumn::make('description')->limit(40),
             ])
@@ -55,13 +52,9 @@ class FeatureResource extends Resource
                 Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Actions\BulkActionGroup::make([
-                    Actions\DeleteBulkAction::make(),
-                ]),
+                Actions\BulkActionGroup::make([Actions\DeleteBulkAction::make()]),
             ]);
     }
-
-    public static function getRelations(): array { return []; }
 
     public static function getPages(): array
     {

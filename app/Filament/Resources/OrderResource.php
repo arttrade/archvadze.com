@@ -23,6 +23,7 @@ class OrderResource extends Resource
     {
         return $schema->schema([
             Section::make('Client Info')
+                ->columnSpanFull()
                 ->schema([
                     Forms\Components\TextInput::make('client_name')->label('Name')->maxLength(255),
                     Forms\Components\TextInput::make('email')->email()->maxLength(255),
@@ -33,6 +34,7 @@ class OrderResource extends Resource
                 ])->columns(2),
 
             Section::make('Order Details')
+                ->columnSpanFull()
                 ->schema([
                     Forms\Components\TextInput::make('domain')->required()->maxLength(255),
                     Forms\Components\Select::make('website_type')
@@ -74,12 +76,14 @@ class OrderResource extends Resource
                 ])->columns(2),
 
             Section::make('Project Description')
+                ->columnSpanFull()
                 ->schema([
                     Forms\Components\Textarea::make('project_description')->rows(4)->columnSpanFull(),
                     Forms\Components\Textarea::make('additional_requirements')->rows(3)->columnSpanFull(),
                 ])->collapsed(),
 
             Section::make('Services & Features')
+                ->columnSpanFull()
                 ->schema([
                     Forms\Components\CheckboxList::make('services')
                         ->relationship('services', 'name')->columns(2),

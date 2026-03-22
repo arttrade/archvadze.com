@@ -29,6 +29,7 @@
     {{-- Canonical --}}
     <link rel="canonical" href="{{ url()->current() }}">
 
+
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>

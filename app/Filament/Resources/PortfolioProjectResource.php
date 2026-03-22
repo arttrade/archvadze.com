@@ -23,6 +23,7 @@ class PortfolioProjectResource extends Resource
     {
         return $schema->schema([
             Section::make('Project Details')
+                ->columnSpanFull()
                 ->schema([
                     Forms\Components\TextInput::make('title')
                         ->required()
@@ -55,6 +56,7 @@ class PortfolioProjectResource extends Resource
                 ])->columns(2),
 
             Section::make('Cover Image')
+                ->columnSpanFull()
                 ->schema([
                     Forms\Components\FileUpload::make('cover_image')
                         ->label('Cover Image')
@@ -68,6 +70,7 @@ class PortfolioProjectResource extends Resource
                 ]),
 
             Section::make('Description & Technologies')
+                ->columnSpanFull()
                 ->schema([
                     Forms\Components\Textarea::make('description')
                         ->rows(4)
@@ -78,6 +81,7 @@ class PortfolioProjectResource extends Resource
                 ]),
 
             Section::make('Visibility')
+                ->columnSpanFull()
                 ->schema([
                     Forms\Components\Toggle::make('is_featured')
                         ->label('Featured on Homepage')

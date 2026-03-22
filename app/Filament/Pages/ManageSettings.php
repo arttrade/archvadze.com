@@ -78,18 +78,16 @@ class ManageSettings extends Page implements HasForms
 
                 Section::make('Colors & Theme')
                     ->schema([
-                        Forms\Components\ColorPicker::make('color_primary')
-                            ->label('Primary Color')
-                            ->helperText('Main brand color — buttons, links, accents'),
+                        Forms\Components\TextInput::make('color_primary')
+                            ->label('Primary Color (HSL)')
+                            ->placeholder('221 83% 53%')
+                            ->helperText('HSL format: H S% L% — მაგ: 221 83% 53% (ლურჯი), 142 76% 36% (მწვანე), 0 84% 60% (წითელი)')
+                            ->suffixIcon('heroicon-o-swatch'),
                         Forms\Components\Toggle::make('dark_mode')
                             ->label('Dark Mode')
-                            ->helperText('Enable dark mode for the entire site')
+                            ->helperText('Enable dark mode')
                             ->onColor('success')
                             ->offColor('gray'),
-                        Forms\Components\ColorPicker::make('color_header_bg')
-                            ->label('Header Background'),
-                        Forms\Components\ColorPicker::make('color_footer_bg')
-                            ->label('Footer Background'),
                     ])->columns(2),
 
                 Section::make('Social Media')
