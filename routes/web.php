@@ -20,6 +20,7 @@ Route::get('/blog', [PublicationController::class, 'index'])->name('blog');
 Route::get('/blog/{slug}', [PublicationController::class, 'show'])->name('blog.show');
 Route::get('/guides', [GuideController::class, 'index'])->name('guides');
 Route::get('/guides/{slug}', [GuideController::class, 'show'])->name('guides.show');
+Route::get('/sitemap.xml', [App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap');
 Route::get('/about', [PageController::class, 'about'])->name('about');
 Route::get('/faq', [PageController::class, 'faq'])->name('faq');
 Route::get('/privacy-policy', [PageController::class, 'privacyPolicy'])->name('privacy-policy');

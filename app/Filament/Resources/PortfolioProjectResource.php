@@ -16,6 +16,7 @@ class PortfolioProjectResource extends Resource
 {
     protected static ?string $model = PortfolioProject::class;
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-photo';
+    protected static ?int $navigationSort = 4;
     protected static ?string $navigationLabel = 'Portfolio';
 
     public static function form(Schema $schema): Schema

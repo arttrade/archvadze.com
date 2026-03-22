@@ -5,7 +5,9 @@ use App\Models\SiteSetting;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use App\Models\Order;
+use App\Models\Publication;
 use App\Observers\OrderObserver;
+use App\Observers\PublicationObserver;
 use Illuminate\Validation\Rules\Password;
 
 class AppServiceProvider extends ServiceProvider
@@ -16,6 +18,7 @@ class AppServiceProvider extends ServiceProvider
     {
         // Password default rules — მინიმუმ 8 სიმბოლო, ერთი დიდი, ერთი პატარა, ერთი ციფრი
         Order::observe(OrderObserver::class);
+        Publication::observe(PublicationObserver::class);
 
         Password::defaults(function () {
             return Password::min(8)

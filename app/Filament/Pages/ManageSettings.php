@@ -17,7 +17,7 @@ class ManageSettings extends Page implements HasForms
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-cog-6-tooth';
     protected static ?string $navigationLabel = 'Settings';
     protected static ?string $title = 'Site Settings';
-    protected static ?int $navigationSort = 99;
+    protected static ?int $navigationSort = 17;
 
     public function getView(): string
     {
@@ -56,6 +56,12 @@ class ManageSettings extends Page implements HasForms
                             ->rows(4)
                             ->columnSpanFull()
                             ->helperText('Google Analytics-ის სრული script კოდი'),
+                        Forms\Components\Textarea::make('head_scripts')
+                            ->label('Head Scripts / Verification Codes')
+                            ->placeholder('<!-- Google Search Console, Bing, etc. verification meta tags or scripts -->')
+                            ->rows(4)
+                            ->columnSpanFull()
+                            ->helperText('Google Search Console, Bing Webmaster, Facebook Domain Verification და სხვა კოდები'),
                     ])->columns(2),
 
                 Section::make('Contact & Location')

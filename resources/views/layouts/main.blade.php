@@ -7,6 +7,27 @@
 
     <title>{{ $title ?? config('app.name', 'Laravel') }}</title>
     <meta name="description" content="{{ $description ?? 'Professional web design and development services' }}">
+    <meta name="keywords" content="{{ $keywords ?? 'web development, web design, SEO, e-commerce, Georgia, Tbilisi' }}">
+    <meta name="author" content="{{ data_get($siteSettings, 'site_name', 'Archvadze') }}">
+    <meta name="robots" content="index, follow">
+
+    {{-- Open Graph --}}
+    <meta property="og:title" content="{{ $title ?? config('app.name') }}">
+    <meta property="og:description" content="{{ $description ?? 'Professional web design and development services' }}">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:site_name" content="{{ data_get($siteSettings, 'site_name', 'Archvadze') }}">
+    @if(isset($ogImage))
+    <meta property="og:image" content="{{ $ogImage }}">
+    @endif
+
+    {{-- Twitter Card --}}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $title ?? config('app.name') }}">
+    <meta name="twitter:description" content="{{ $description ?? 'Professional web design and development services' }}">
+
+    {{-- Canonical --}}
+    <link rel="canonical" href="{{ url()->current() }}">
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -232,63 +253,41 @@
             menu.classList.toggle('hidden');
         }
     </script>
-    {{-- Dynamic CSS Variables --}}
+
+
+    {{-- Head Scripts (Google Search Console, Bing, etc.) --}}
+    @if(data_get($siteSettings, 'head_scripts'))
+    {!! data_get($siteSettings, 'head_scripts') !!}
+    @endif
+
+    {{-- Schema.org JSON-LD --}}
     @php
-        $primaryColor = data_get($siteSettings, 'color_primary', '221 83% 53%');
-        $headerBg = data_get($siteSettings, 'color_header_bg', 'ffffff');
-        $footerBg = data_get($siteSettings, 'color_footer_bg', '');
-        $darkMode = data_get($siteSettings, 'dark_mode', '0');
-
-        // hex to rgb conversion for header/footer
-        $headerBgClean = ltrim($headerBg, '#');
-        $footerBgClean = ltrim($footerBg, '#');
-
-        function hexToRgb($hex) {
-            $hex = ltrim($hex, '#');
-            if (strlen($hex) == 6) {
-                return [hexdec(substr($hex,0,2)), hexdec(substr($hex,2,2)), hexdec(substr($hex,4,2))];
-            }
-            return [255, 255, 255];
-        }
-
-        // Convert hex to HSL for primary if needed
-        $isHsl = str_contains($primaryColor, ' ');
-        if (!$isHsl && strlen(ltrim($primaryColor, '#')) >= 6) {
-            [$r, $g, $b] = hexToRgb($primaryColor);
-            $r /= 255; $g /= 255; $b /= 255;
-            $max = max($r, $g, $b); $min = min($r, $g, $b);
-            $l = ($max + $min) / 2;
-            if ($max == $min) { $h = $s = 0; }
-            else {
-                $d = $max - $min;
-                $s = $l > 0.5 ? $d / (2 - $max - $min) : $d / ($max + $min);
-                switch($max) {
-                    case $r: $h = (($g - $b) / $d + ($g < $b ? 6 : 0)) / 6; break;
-                    case $g: $h = (($b - $r) / $d + 2) / 6; break;
-                    case $b: $h = (($r - $g) / $d + 4) / 6; break;
-                }
-            }
-            $primaryColor = round($h*360) . ' ' . round($s*100) . '% ' . round($l*100) . '%';
-        }
+        $schemaJson = json_encode([
+            '@context' => 'https://schema.org',
+            '@type' => 'WebSite',
+            'name' => data_get($siteSettings, 'site_name', 'Archvadze'),
+            'url' => data_get($siteSettings, 'site_url', config('app.url')),
+            'description' => 'Professional web design and development services',
+            'contactPoint' => [
+                '@type' => 'ContactPoint',
+                'telephone' => data_get($siteSettings, 'site_phone', ''),
+                'email' => data_get($siteSettings, 'site_email', ''),
+                'contactType' => 'customer service',
+            ],
+            'address' => [
+                '@type' => 'PostalAddress',
+                'addressLocality' => 'Tbilisi',
+                'addressCountry' => 'GE',
+            ],
+            'sameAs' => array_filter([
+                data_get($siteSettings, 'social_facebook', ''),
+                data_get($siteSettings, 'social_twitter', ''),
+                data_get($siteSettings, 'social_instagram', ''),
+                data_get($siteSettings, 'social_linkedin', ''),
+            ]),
+        ]);
     @endphp
-    <style>
-        :root {
-            --primary: {{ $primaryColor }};
-            --primary-foreground: 0 0% 100%;
-        }
-        @if($darkMode == '1')
-        body { filter: invert(1) hue-rotate(180deg); }
-        img, video, iframe { filter: invert(1) hue-rotate(180deg); }
-        @endif
-        @if($headerBgClean && strlen($headerBgClean) >= 6)
-        @php [$hr, $hg, $hb] = hexToRgb($headerBgClean); @endphp
-        header { background-color: rgb({{ $hr }}, {{ $hg }}, {{ $hb }}) !important; }
-        @endif
-        @if($footerBgClean && strlen($footerBgClean) >= 6)
-        @php [$fr, $fg, $fb] = hexToRgb($footerBgClean); @endphp
-        footer { background-color: rgb({{ $fr }}, {{ $fg }}, {{ $fb }}) !important; }
-        @endif
-    </style>
+    <script type="application/ld+json">{!! $schemaJson !!}</script>
 
     {{-- Google Analytics --}}
     @if(data_get($siteSettings, 'google_analytics'))

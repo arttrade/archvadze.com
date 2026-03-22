@@ -22,7 +22,7 @@
         {{-- Thumbnail --}}
         <a href="{{ route('guides.show', $guide->slug) }}" class="block relative h-48 overflow-hidden bg-gray-100">
           @if($guide->youtube_thumbnail)
-            <img src="{{ $guide->youtube_thumbnail }}" alt="{{ $guide->title }}"
+            <img src="{{ $guide- loading="lazy">youtube_thumbnail }}" alt="{{ $guide->title }}"
                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
             <div class="absolute inset-0 flex items-center justify-center">
               <div class="bg-red-600 text-white rounded-full w-12 h-12 flex items-center justify-center shadow-lg">
