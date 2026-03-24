@@ -98,6 +98,37 @@
       </ol>
     </div>
 
+    {{-- Payment Section --}}
+    @if($order->payment_status === 'unpaid')
+    <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-6 mb-6">
+        <h3 class="text-base font-semibold text-yellow-900 mb-2">Complete Your Payment</h3>
+        <p class="text-sm text-yellow-800 mb-4">
+            Total: <strong>${{ number_format($order->price_estimate, 2) }}</strong>
+        </p>
+        @auth
+        <a href="{{ route('payment.create', $order->id) }}"
+           class="inline-flex items-center gap-2 rounded-md bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-medium h-10 px-6">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.312 2.86 1.312 4.521 0 .617-.076 1.28-.23 1.98-1.01 4.1-4.386 5.026-8.28 5.026h-2.1c-.495 0-.912.358-.99.848l-1.06 6.99c-.081.505-.513.874-1.024.874h.3z"/>
+            </svg>
+            Pay with PayPal
+        </a>
+        @else
+        <a href="{{ route('login') }}"
+           class="inline-flex items-center rounded-md bg-primary text-primary-foreground hover:bg-primary/90 text-sm font-medium h-10 px-6">
+            Login to Pay
+        </a>
+        @endauth
+    </div>
+    @else
+    <div class="bg-green-50 border border-green-200 rounded-xl p-4 mb-6 flex items-center gap-3">
+        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <p class="text-sm text-green-800 font-medium">Payment completed ✓</p>
+    </div>
+    @endif
+
     {{-- Actions --}}
     <div class="flex flex-col sm:flex-row gap-4">
       <a href="{{ route('client-dashboard.index') }}"

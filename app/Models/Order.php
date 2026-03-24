@@ -24,6 +24,10 @@ class Order extends Model
         'budget_range',
         'project_description',
         'additional_requirements',
+        'payment_status',
+        'payment_id',
+        'payment_method',
+        'paid_at',
     ];
 
     public function client(): BelongsTo

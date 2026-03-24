@@ -8,6 +8,7 @@ use App\Http\Controllers\GuideController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\Auth\SocialAuthController;
 use App\Http\Controllers\DomainSearchController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ClientDashboardController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
@@ -28,6 +29,12 @@ Route::get('/terms', [PageController::class, 'terms'])->name('terms');
 Route::post('/newsletter/subscribe', [App\Http\Controllers\NewsletterController::class, 'subscribe'])->name('newsletter.subscribe');
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 Route::post('/contact', [PageController::class, 'sendContact'])->name('contact.send');
+Route::middleware('auth')->group(function () {
+    Route::get('/payment/{orderId}/create', [PaymentController::class, 'createPayment'])->name('payment.create');
+    Route::get('/payment/{orderId}/success', [PaymentController::class, 'paymentSuccess'])->name('payment.success');
+    Route::get('/payment/{orderId}/cancel', [PaymentController::class, 'paymentCancel'])->name('payment.cancel');
+});
+
 Route::post('/domain-search', [DomainSearchController::class, 'search'])->name('domain.search');
 
 Route::get('/order', [OrderController::class, 'create'])->name('order.create');
